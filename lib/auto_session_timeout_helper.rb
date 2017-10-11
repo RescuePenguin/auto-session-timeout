@@ -23,7 +23,7 @@ function PeriodicalQuery() {
       url: '/active',
       success: function(data) {
         if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)){
-          showDialog();
+          $('#logout_dialog').modal({keyboard: false, background: 'static'});
         }
         if(data.live == false){
           window.location.href = '/timeout';
