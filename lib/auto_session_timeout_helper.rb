@@ -17,7 +17,7 @@ if(typeof(jQuery) != 'undefined'){
       });
     });
 
-  });
+  };
 function PeriodicalQuery() {
   $.ajax({
       url: '/active',
