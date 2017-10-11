@@ -23,11 +23,6 @@ module AutoSessionTimeout
       define_method(:active) { render_session_status }
       define_method(:timeout) { render_session_timeout }
     end
-
-    def before_timedout_action
-      define_method(:before_timedout){}
-      send(:protected, :before_timedout)
-    end
   end
   
   def render_session_status
