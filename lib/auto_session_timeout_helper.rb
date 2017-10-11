@@ -23,9 +23,10 @@ function PeriodicalQuery() {
       url: '/active',
       success: function(data) {
         if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)){
-          $('#logout_dialog').modal({keyboard: false, background: 'static'});
+          $('#logout_dialog').modal({keyboard: false, backdrop: 'static'});
         }
         if(data.live == false){
+          $('#logout_dialog').modal('hide');
           window.location.href = '/timeout';
         }
       }
