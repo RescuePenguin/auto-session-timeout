@@ -9,7 +9,6 @@ module AutoSessionTimeout
       protect_from_forgery except: [:active, :timeout]
       prepend_before_action do |c|
         if c.session[:auto_session_expires_at] && c.session[:auto_session_expires_at] < Time.now
-          c.send :before_timedout
           c.send :reset_session
         else
           unless c.request.original_url.start_with?(c.send(:active_url))
