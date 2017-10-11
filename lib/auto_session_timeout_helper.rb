@@ -54,7 +54,7 @@ JS
     expired_classes = !!(options[:classes]) ? options[:classes] + '"' : ''
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
-    "<div class='modal fade' id='logout_dialog' tabindex='-1' role='dialog' aria-labelledby='logout_dialog_label' aria-hidden='true'>
+    "<div class='modal' id='logout_dialog' tabindex='-1' role='dialog' aria-labelledby='logout_dialog_label' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
@@ -69,7 +69,7 @@ JS
     </div>
   </div>
 </div>
-<div class='modal fade' id='session_expired' tabindex='-1' role='dialog' aria-labelledby='session_expired_label' aria-hidden='true'>
+<div class='modal' id='session_expired' tabindex='-1' role='dialog' aria-labelledby='session_expired_label' aria-hidden='true'>
   <div class='modal-dialog' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
