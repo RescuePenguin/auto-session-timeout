@@ -1,6 +1,5 @@
 module AutoSessionTimeoutHelper
   def auto_session_timeout_js(options={})
-    puts options
     frequency = options[:frequency] || 60
     verbosity = options[:verbosity] || 2
     timeout = options[:timeout] || 60
@@ -26,13 +25,12 @@ function PeriodicalQuery() {
       success: function(data) {
         if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)){
           $('#logout_dialog').modal({keyboard: false, backdrop: 'static'});
-        }
-        if(data.live == false){
-          $('#logout_dialog').modal('hide');
-
           if (#{submit_form_before_logout}) {
             $('form[name="' + #{form_name} +'"]').submit();
           }
+        }
+        if(data.live == false){
+          $('#logout_dialog').modal('hide');
 
           $('#session_expired').modal({keyboard: false, backdrop: 'static'});
         }
