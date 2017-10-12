@@ -56,9 +56,9 @@ JS
     default_expired_message = "Your session has expired.<br/><br/>Please log in again to continue."
     expired_message = options[:expired_message] || default_expired_message
     expired_title = options[:expired_title] || "Session Expired"
-    expired_classes = !!(options[:expired_classes]) ? options[:classes] : ''
+    expired_classes = options[:classes] || ''
     expired_button = options[:expired_button] || "Log in"
-    expired_button_classes = !!(options[:expired_button_classes]) ? options[:classes] : 'btn'
+    expired_button_classes =  options[:classes] || 'btn'
 
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
