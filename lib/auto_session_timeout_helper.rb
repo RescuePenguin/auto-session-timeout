@@ -6,8 +6,9 @@ module AutoSessionTimeoutHelper
     start = options[:start] || 60
     warning = options[:warning] || 20
     attributes = options[:attributes] || {}
-    submit_form_before_logout = options[:submit_form_before_logout]
+    submit_form_before_logout = options[:submit_form_before_logout] || false
     form_name = options[:form_name] || ''
+    submit_form_url = options[:url]
     code = <<JS
 
 if(typeof(jQuery) != 'undefined'){
@@ -26,6 +27,15 @@ function PeriodicalQuery() {
         if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)){
           $('#logout_dialog').modal({keyboard: false, backdrop: 'static'});
           if (#{submit_form_before_logout}) {
+            $('form[name="' + "#{form_name}" +'"]').on('submit', function(e) {
+              e.preventDefault();
+              $.ajax({
+                type: "POST",
+                data: this.serialize();
+                url: "#{submit_form_url}",
+                dataType: "json"
+              });
+            });
             $('form[name="' + "#{form_name}" +'"]').submit();
           }
         }
