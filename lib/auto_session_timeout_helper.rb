@@ -48,22 +48,22 @@ JS
     continue_button = options[:continue_button] || "Continue"
     default_warning_message = "You are about to be logged out due to inactivity.<br/><br/>Please click &lsquo;#{continue_button}&rsquo; to stay logged in."
     warning_message = options[:warning_message] || default_warning_message
-    warning_classes = !!(options[:warning_classes]) ? options[:classes] + '"' : ''
+    warning_modal_classes = !!(options[:warning_modal_classes]) ? options[:warning_modal_classes] : ''
     warning_title = options[:warning_title] || "Logout Warning"
-    continue_button_classes = !!(options[:continue_button_classes]) ? options[:classes] : 'btn'
+    continue_button_classes = !!(options[:continue_button_classes]) ? options[:continue_button_classes] : 'btn'
 
     # session has expired
     default_expired_message = "Your session has expired.<br/><br/>Please log in again to continue."
     expired_message = options[:expired_message] || default_expired_message
     expired_title = options[:expired_title] || "Session Expired"
-    expired_classes = options[:expired_classes] || ''
+    expired_modal_classes = !!(options[:expired_modal_classes]) ? options[:expired_modal_classes] : ''
     expired_button = options[:expired_button] || "Log in"
-    expired_button_classes =  options[:expired_button_classes] || 'btn'
+    expired_button_classes =  !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
 
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
     "<div class='modal' id='logout_dialog' tabindex='-1' role='dialog' aria-labelledby='logout_dialog_label' aria-hidden='true'>
-  <div class='modal-dialog #{warning_classes}' role='document'>
+  <div class='modal-dialog #{warning_modal_classes}' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h3 class='modal-title' id='logout_dialog'>#{warning_title}</h3>
@@ -78,7 +78,7 @@ JS
   </div>
 </div>
 <div class='modal' id='session_expired' tabindex='-1' role='dialog' aria-labelledby='session_expired_label' aria-hidden='true'>
-  <div class='modal-dialog  #{expired_classes}' role='document'>
+  <div class='modal-dialog  #{expired_modal_classes}' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h3 class='modal-title' id='session_expired'>#{expired_title}</h3>
