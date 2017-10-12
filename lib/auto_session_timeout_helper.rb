@@ -26,7 +26,7 @@ function PeriodicalQuery() {
         if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)){
           $('#logout_dialog').modal({keyboard: false, backdrop: 'static'});
           if (#{submit_form_before_logout}) {
-            $('form[name="' + #{form_name} +'"]').submit();
+            $('form[name="' + "#{form_name}" +'"]').submit();
           }
         }
         if(data.live == false){
