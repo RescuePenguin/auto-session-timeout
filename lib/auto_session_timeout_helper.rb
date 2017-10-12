@@ -6,6 +6,8 @@ module AutoSessionTimeoutHelper
     start = options[:start] || 60
     warning = options[:warning] || 20
     attributes = options[:attributes] || {}
+    submit_form_before_logout = options[:submit_form_before_logout]
+    form_name = options[:form_name]
     code = <<JS
 
 if(typeof(jQuery) != 'undefined'){
@@ -30,6 +32,11 @@ function PeriodicalQuery() {
         }
         if(data.live == false){
           $('#logout_dialog').modal('hide');
+
+          if (#{submit_form_before_logout}) {
+            $('form[name="' + #{form_name} +'"]').submit();
+          }
+
           $('#session_expired').modal({keyboard: false, backdrop: 'static'});
         }
       }
@@ -45,26 +52,66 @@ JS
   #   options={} are output to HTML. Be CAREFUL about XSS/CSRF!
   def auto_session_warning_tag(options={})
     # continue session
-    continue_button = options[:continue_button] || "Continue"
+    continue_button = options[:continue_button] || 'Continue'
     default_warning_message = "You are about to be logged out due to inactivity.<br/><br/>Please click &lsquo;#{continue_button}&rsquo; to stay logged in."
     warning_message = options[:warning_message] || default_warning_message
     warning_modal_classes = !!(options[:warning_modal_classes]) ? options[:warning_modal_classes] : ''
-    warning_title = options[:warning_title] || "Logout Warning"
+    warning_title = options[:warning_title] || 'Logout Warning'
     continue_button_classes = !!(options[:continue_button_classes]) ? options[:continue_button_classes] : 'btn'
     warning_modal_footer = options[:extra_warning_option_buttons] || "<button type='button' class='#{continue_button_classes}' id='session-refresh-button' data-dismiss='modal'>#{continue_button}</button>"
 
     # session has expired
-    default_expired_message = "Your session has expired.<br/><br/>Please log in again to continue."
+    default_expired_message = 'Your session has expired.<br/><br/>Please log in again to continue.'
     expired_message = options[:expired_message] || default_expired_message
     expired_title = options[:expired_title] || "Session Expired"
     expired_modal_classes = !!(options[:expired_modal_classes]) ? options[:expired_modal_classes] : ''
     expired_button = options[:expired_button] || "Log in"
-    expired_button_classes =  !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
+    expired_button_classes = !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
     expired_modal_footer = options[:extra_expired_option_buttons] || "<a class='#{expired_button_classes}' href='/timeout'>#{expired_button}</a>"
 
+    # save form progress before logging out
+    default_submit_form_before_logout_message = 'Your session has expired but your progress has been saved.<br/><br/>Please log in again to continue.'
+    submit_form_before_logout = options[:submit_form_before_logout]
+    submit_form_before_logout_message = options[:submit_form_before_logout_message] || default_submit_form_before_logout_message
 
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
+    normal_expired_modal = "
+    <div class='modal' id='session_expired' tabindex='-1' role='dialog' aria-labelledby='session_expired_label' aria-hidden='true'>
+      <div class='modal-dialog  #{expired_modal_classes}' role='document'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h3 class='modal-title' id='session_expired'>#{expired_title}</h3>
+          </div>
+          <div class='modal-body'>
+            <p>#{expired_message}</p>
+          </div>
+          <div class='modal-footer'>
+            #{expired_modal_footer}
+          </div>
+        </div>
+      </div>
+  </div>
+  "
+
+    submit_form_before_logout_modal = "
+    <div class='modal' id='session_expired' tabindex='-1' role='dialog' aria-labelledby='session_expired_label' aria-hidden='true'>
+      <div class='modal-dialog  #{expired_modal_classes}' role='document'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h3 class='modal-title' id='session_expired'>#{expired_title}</h3>
+          </div>
+          <div class='modal-body'>
+            <p>#{submit_form_before_logout_message}</p>
+          </div>
+          <div class='modal-footer'>
+            #{expired_modal_footer}
+          </div>
+        </div>
+      </div>
+  </div>
+  "
+
     "<div class='modal' id='logout_dialog' tabindex='-1' role='dialog' aria-labelledby='logout_dialog_label' aria-hidden='true'>
   <div class='modal-dialog #{warning_modal_classes}' role='document'>
     <div class='modal-content'>
@@ -80,22 +127,8 @@ JS
     </div>
   </div>
 </div>
-<div class='modal' id='session_expired' tabindex='-1' role='dialog' aria-labelledby='session_expired_label' aria-hidden='true'>
-  <div class='modal-dialog  #{expired_modal_classes}' role='document'>
-    <div class='modal-content'>
-      <div class='modal-header'>
-        <h3 class='modal-title' id='session_expired'>#{expired_title}</h3>
-      </div>
-      <div class='modal-body'>
-        <p>#{expired_message}</p>
-      </div>
-      <div class='modal-footer'>
-        #{expired_modal_footer}
-      </div>
-    </div>
-  </div>
-</div>
-".html_safe
+  #{submit_form_before_logout ? submit_form_before_logout_modal : normal_expired_modal}
+    ".html_safe
   end
 
 end
