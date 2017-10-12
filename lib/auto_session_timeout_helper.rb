@@ -7,7 +7,7 @@ module AutoSessionTimeoutHelper
     start = options[:start] || 60
     warning = options[:warning] || 20
     attributes = options[:attributes] || {}
-    submit_form_before_logout = options[:submit_form_before_logout] || 'false'
+    submit_form_before_logout = options[:submit_form_before_logout]
     form_name = options[:form_name] || ''
     code = <<JS
 
@@ -30,7 +30,7 @@ function PeriodicalQuery() {
         if(data.live == false){
           $('#logout_dialog').modal('hide');
 
-          if (#{submit_form_before_logout} === 'true') {
+          if (#{submit_form_before_logout}) {
             $('form[name="' + #{form_name} +'"]').submit();
           }
 
