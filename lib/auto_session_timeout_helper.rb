@@ -44,14 +44,21 @@ JS
   # Generates viewport-covering dialog HTML with message in center
   #   options={} are output to HTML. Be CAREFUL about XSS/CSRF!
   def auto_session_warning_tag(options={})
-    default_message = "You are about to be logged out due to inactivity.<br/><br/>Please click &lsquo;Continue&rsquo; to stay logged in."
-    default_expired_message = "Your session has expired.<br/><br/>Please log in again to continue."
+    # continue session
+    continue_button = options[:continue_button] || "Continue"
+    default_message = "You are about to be logged out due to inactivity.<br/><br/>Please click &lsquo;#{continue_button}&rsquo; to stay logged in."
     html_message = options[:message] || default_message
-    html_expired_message = options[:message] || default_expired_message
-    warning_title = options[:title] || "Logout Warning"
-    expired_title = options[:title] || "Session Expired"
     warning_classes = !!(options[:classes]) ? options[:classes] + '"' : ''
-    expired_classes = !!(options[:classes]) ? options[:classes] + '"' : ''
+    warning_title = options[:title] || "Logout Warning"
+    continue_button_classes = !!(options[:expired_classes]) ? options[:classes] : 'btn'
+    # session has expired
+    default_expired_message = "Your session has expired.<br/><br/>Please log in again to continue."
+    html_expired_message = options[:expired_message] || default_expired_message
+    expired_title = options[:expired_title] || "Session Expired"
+    expired_classes = !!(options[:expired_classes]) ? options[:classes] : 'btn'
+    expired_button = options[:expired_button] || "Log in"
+    expired_button_classes = !!(options[:expired_classes]) ? options[:classes] : 'btn'
+
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
     "<div class='modal' id='logout_dialog' tabindex='-1' role='dialog' aria-labelledby='logout_dialog_label' aria-hidden='true'>
@@ -64,7 +71,7 @@ JS
         <p>#{html_message}</p>
       </div>
       <div class='modal-footer'>
-        <button type='button' class='usa-button-primary' id='session-refresh-button' data-dismiss='modal'>Continue</button>
+        <button type='button' class='#{continue_button_classes}' id='session-refresh-button' data-dismiss='modal'>#{continue_button}</button>
       </div>
     </div>
   </div>
@@ -79,7 +86,7 @@ JS
         <p>#{html_expired_message}</p>
       </div>
       <div class='modal-footer'>
-        <button type='button' class='usa-button-primary' id='session-timeout-button'>Log in</button>
+        <a class='#{expired_button_classes}' href='/timeout'>#{expired_button}</a>
       </div>
     </div>
   </div>
