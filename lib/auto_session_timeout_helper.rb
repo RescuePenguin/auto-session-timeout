@@ -30,7 +30,7 @@ function PeriodicalQuery() {
             $('form[name="' + "#{form_name}" +'"]').on('submit', function(e) {
               e.preventDefault();
               $.ajax({
-                type: "POST",
+                type: "PATCH",
                 data: this.serialize(),
                 url: "#{submit_form_url}",
                 dataType: "json"
