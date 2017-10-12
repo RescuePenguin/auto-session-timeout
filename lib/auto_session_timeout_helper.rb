@@ -31,7 +31,7 @@ function PeriodicalQuery() {
               e.preventDefault();
               $.ajax({
                 type: "POST",
-                data: this.serialize();
+                data: this.serialize(),
                 url: "#{submit_form_url}",
                 dataType: "json"
               });
