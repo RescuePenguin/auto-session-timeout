@@ -51,6 +51,7 @@ JS
     warning_modal_classes = !!(options[:warning_modal_classes]) ? options[:warning_modal_classes] : ''
     warning_title = options[:warning_title] || "Logout Warning"
     continue_button_classes = !!(options[:continue_button_classes]) ? options[:continue_button_classes] : 'btn'
+    extra_warning_option_buttons = options[:extra_warning_option_buttons] || ''
 
     # session has expired
     default_expired_message = "Your session has expired.<br/><br/>Please log in again to continue."
@@ -59,6 +60,8 @@ JS
     expired_modal_classes = !!(options[:expired_modal_classes]) ? options[:expired_modal_classes] : ''
     expired_button = options[:expired_button] || "Log in"
     expired_button_classes =  !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
+    extra_expired_option_buttons = options[:extra_expired_option_buttons] || ''
+
 
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
@@ -72,6 +75,7 @@ JS
         <p>#{warning_message}</p>
       </div>
       <div class='modal-footer'>
+        #{extra_warning_option_buttons}
         <button type='button' class='#{continue_button_classes}' id='session-refresh-button' data-dismiss='modal'>#{continue_button}</button>
       </div>
     </div>
@@ -87,6 +91,7 @@ JS
         <p>#{expired_message}</p>
       </div>
       <div class='modal-footer'>
+        #{extra_expired_option_buttons}
         <a class='#{expired_button_classes}' href='/timeout'>#{expired_button}</a>
       </div>
     </div>
