@@ -1,26 +1,23 @@
 module AutoSessionTimeoutHelper
   def auto_session_timeout_js(options={})
+    puts options
     frequency = options[:frequency] || 60
     verbosity = options[:verbosity] || 2
     timeout = options[:timeout] || 60
     start = options[:start] || 60
     warning = options[:warning] || 20
     attributes = options[:attributes] || {}
-    submit_form_before_logout = options[:submit_form_before_logout]
-    form_name = options[:form_name]
+    submit_form_before_logout = options[:submit_form_before_logout] || 'false'
+    form_name = options[:form_name] || ''
     code = <<JS
 
 if(typeof(jQuery) != 'undefined'){
-    $('session-refresh-button').click(function() {
+    $('#session-refresh-button').click(function() {
       $.ajax({
         type: "GET",
         url: "/application/session_time",
         dataType: "html"
       });
-    });
-
-    $('session-refresh-button').click(function() {
-        window.location.href = '/timeout';
     });
   };
 function PeriodicalQuery() {
@@ -33,7 +30,7 @@ function PeriodicalQuery() {
         if(data.live == false){
           $('#logout_dialog').modal('hide');
 
-          if (#{submit_form_before_logout}) {
+          if (#{submit_form_before_logout} === 'true') {
             $('form[name="' + #{form_name} +'"]').submit();
           }
 
