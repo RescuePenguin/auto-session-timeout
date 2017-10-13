@@ -7,6 +7,7 @@ module AutoSessionTimeoutHelper
     warning = options[:warning] || 20
     attributes = options[:attributes] || {}
     form_name = options[:form_name] || ''
+    expired_button = options[:expired_button] || 'Log in'
     code = <<JS
 
 if(typeof(jQuery) != 'undefined'){
