@@ -30,7 +30,7 @@ function PeriodicalQuery() {
         }
         if(data.live == false){
           $('#logout_dialog').modal('hide');
-          $('#session_expired').modal({keyboard: false, backdrop: 'static'});
+          $('#session_expired_dialog').modal({keyboard: false, backdrop: 'static'});
           var form = $("form[name='#{form_name}']");
           if (form.length > 0) {
               var formData = new FormData(form[0]);
@@ -46,7 +46,7 @@ function PeriodicalQuery() {
                     contentType: false,
                     data: formData,
                     success: function (data) {
-                        $('#expired_button').attr('disabled', false);
+                        $('#session_expired_dialog .modal-footer').append("<a class='usa-button-primary' id='expired_button' href='/timeout'>#{expired_button}</a>");
                     }
                 });
               }
@@ -80,21 +80,20 @@ JS
     expired_modal_classes = !!(options[:expired_modal_classes]) ? options[:expired_modal_classes] : ''
     expired_button = options[:expired_button] || "Log in"
     expired_button_classes = !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
-    expired_modal_footer = options[:extra_expired_option_buttons] || "<a class='#{expired_button_classes}' id='expired_button' href='/timeout'>#{expired_button}</a>"
+    expired_modal_footer = options[:extra_expired_option_buttons] || ""
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
     normal_expired_modal = "
-    <div class='modal' id='session_expired' tabindex='-1' role='dialog' aria-labelledby='session_expired_label' aria-hidden='true'>
+    <div class='modal' id='session_expired_dialog' tabindex='-1' role='dialog' aria-labelledby='session_expired_dialog_label' aria-hidden='true'>
       <div class='modal-dialog  #{expired_modal_classes}' role='document'>
         <div class='modal-content'>
           <div class='modal-header'>
-            <h3 class='modal-title' id='session_expired'>#{expired_title}</h3>
+            <h3 class='modal-title' id='session_expired_title'>#{expired_title}</h3>
           </div>
           <div class='modal-body'>
             <p>#{expired_message}</p>
           </div>
           <div class='modal-footer'>
-            #{expired_modal_footer}
           </div>
         </div>
       </div>
