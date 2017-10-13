@@ -19,7 +19,9 @@ if(typeof(jQuery) != 'undefined'){
   });
 
   $('#expired_button').click(function() {
-    window.sessionStorage.setItem('saveBeforeTimeout', '0');
+    //do not want the saveBeforeTimeout to reset before the system has a chance to go back to the log in screen
+    //this tells the application that the 'saveBeforeTimeout' item is ready to be reset when this button is clicked
+    window.sessionStorage.setItem('resetSaveBeforeTimeout', '1');
   });
 };
 
