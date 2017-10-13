@@ -33,6 +33,7 @@ function PeriodicalQuery() {
           $('#session_expired').modal({keyboard: false, backdrop: 'static'});
           var form = $("form[name='#{form_name}']");
           if (form.length > 0) {
+              var formData = new FormData(form[0]);
               form.append('<input type="hidden" name="save_before_timeout" value="true" />');
               if (!saved_before_session_end) {
                 saved_before_session_end = true;
@@ -42,7 +43,7 @@ function PeriodicalQuery() {
                     dataType: 'json',
                     processData: false,
                     contentType: false,
-                    data: form.serialize(),
+                    data: formData,
                     success: function (data) {
                         console.log('Submitted form');
                     }
