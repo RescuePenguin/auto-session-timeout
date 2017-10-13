@@ -45,11 +45,10 @@ function PeriodicalQuery() {
                     dataType: 'json',
                     processData: false,
                     contentType: false,
-                    data: formData,
-                    success: function (data) {
-                        $('#session_expired_dialog .saving-loader').hide();
-                        $('#expired_button').show();
-                    }
+                    data: formData
+                }).done(function() {
+                    $('#session_expired_dialog .saving-loader').hide();
+                    $('#expired_button').show();
                 });
               }
           }
@@ -82,7 +81,7 @@ JS
     expired_modal_classes = !!(options[:expired_modal_classes]) ? options[:expired_modal_classes] : ''
     expired_button = options[:expired_button] || "Log in"
     expired_button_classes = !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
-    expired_modal_footer = options[:extra_expired_option_buttons] || "<span class='saving-loader'><span class='fa fa-spinner fa-pulse fa-2x fa-fw tiny-loader' style='display:none;'></span> Saving...</span>
+    expired_modal_footer = options[:extra_expired_option_buttons] || "<span class='saving-loader' style='display:none;'><span class='fa fa-spinner fa-pulse fa-2x fa-fw tiny-loader'></span> Saving...</span>
                                                                         <a class='#{expired_button_classes}' id='expired_button' href='/timeout'>#{expired_button}</a>"
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
