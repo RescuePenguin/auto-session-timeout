@@ -37,6 +37,7 @@ function PeriodicalQuery() {
               form.append('<input type="hidden" name="save_before_timeout" value="true" />');
               if (!saved_before_session_end) {
                 saved_before_session_end = true;
+                $('#session_expired_dialog .saving-loader').show();
                 $('#expired_button').hide();
                 $.ajax({
                     url: form[0].action,
@@ -46,6 +47,7 @@ function PeriodicalQuery() {
                     contentType: false,
                     data: formData,
                     success: function (data) {
+                        $('#session_expired_dialog .saving-loader').hide();
                         $('#expired_button').show();
                     }
                 });
@@ -80,7 +82,8 @@ JS
     expired_modal_classes = !!(options[:expired_modal_classes]) ? options[:expired_modal_classes] : ''
     expired_button = options[:expired_button] || "Log in"
     expired_button_classes = !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
-    expired_modal_footer = options[:extra_expired_option_buttons] || "<a class='#{expired_button_classes}' id='expired_button' href='/timeout'>#{expired_button}</a>"
+    expired_modal_footer = options[:extra_expired_option_buttons] || "<span class='saving-loader'><span class='fa fa-spinner fa-pulse fa-2x fa-fw tiny-loader' style='display:none;'></span> Saving...</span>
+                                                                        <a class='#{expired_button_classes}' id='expired_button' href='/timeout'>#{expired_button}</a>"
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
     normal_expired_modal = "
