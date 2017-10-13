@@ -10,8 +10,7 @@ module AutoSessionTimeout
       prepend_before_action do |c|
         if c.session[:auto_session_expires_at] && c.session[:auto_session_expires_at] < Time.now
           c.send :before_timedout
-          c.send :wait_for_requests
-          c.send :reset_session
+          #c.send :reset_session
         else
           unless c.request.original_url.start_with?(c.send(:active_url))
             offset = seconds || (current_user.respond_to?(:auto_timeout) ? current_user.auto_timeout : nil)
@@ -29,11 +28,6 @@ module AutoSessionTimeout
     def before_timedout_action
       define_method(:before_timedout){}
       send(:protected, :before_timedout)
-    end
-
-    def wait_for_requests_action
-      define_method(:wait_for_requests){}
-      send(:protected, :wait_for_requests)
     end
 
   end
