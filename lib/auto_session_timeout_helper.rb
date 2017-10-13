@@ -40,6 +40,8 @@ function PeriodicalQuery() {
                     url: form[0].action,
                     type: 'patch',
                     dataType: 'json',
+                    processData: false,
+                    contentType: false,
                     data: form.serialize(),
                     success: function (data) {
                         console.log('Submitted form');
