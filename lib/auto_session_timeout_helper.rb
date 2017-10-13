@@ -10,14 +10,18 @@ module AutoSessionTimeoutHelper
     code = <<JS
 
 if(typeof(jQuery) != 'undefined'){
-    $('#session-refresh-button').click(function() {
-      $.ajax({
-        type: "GET",
-        url: "/application/session_time",
-        dataType: "html"
-      });
+  $('#session-refresh-button').click(function() {
+    $.ajax({
+      type: "GET",
+      url: "/application/session_time",
+      dataType: "html"
     });
-  };
+  });
+
+  $('#expired_button').click(function() {
+    window.sessionStorage.setItem('saveBeforeTimeout', '0');
+  });
+};
 
 var saved_before_session_end = false;
 
@@ -35,18 +39,20 @@ function PeriodicalQuery() {
           if (form.length > 0) {
               var formData = new FormData(form[0]);
               form.append('<input type="hidden" name="save_before_timeout" value="true" />');
-              if (!saved_before_session_end) {
+              if (!saved_before_session_end && window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
                 saved_before_session_end = true;
                 $('#session_expired_dialog .saving-loader').show();
                 $('#expired_button').hide();
                 $.ajax({
                     url: form[0].action,
-                    type: 'patch',
+                    type: 'post',
                     dataType: 'json',
                     processData: false,
                     contentType: false,
                     data: formData
                 }).done(function() {
+                    //this prevents saving if the user refreshes the page on a form
+                    window.sessionStorage.setItem('saveBeforeTimeout', '1');
                     $('#session_expired_dialog .saving-loader').hide();
                     $('#expired_button').show();
                 });
