@@ -37,6 +37,7 @@ function PeriodicalQuery() {
               form.append('<input type="hidden" name="save_before_timeout" value="true" />');
               if (!saved_before_session_end) {
                 saved_before_session_end = true;
+                $('#loading').show();
                 $.ajax({
                     url: form[0].action,
                     type: 'patch',
@@ -45,12 +46,10 @@ function PeriodicalQuery() {
                     contentType: false,
                     data: formData,
                     success: function (data) {
-                        console.log('Submitted form');
+                        $('#loading').hide();
                     }
                 });
               }
-          } else {
-
           }
         }
       }
