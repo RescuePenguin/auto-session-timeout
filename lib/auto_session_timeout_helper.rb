@@ -7,7 +7,6 @@ module AutoSessionTimeoutHelper
     warning = options[:warning] || 20
     attributes = options[:attributes] || {}
     form_name = options[:form_name] || ''
-    expired_button = options[:expired_button] || 'Log in'
     code = <<JS
 
 if(typeof(jQuery) != 'undefined'){
@@ -38,7 +37,7 @@ function PeriodicalQuery() {
               form.append('<input type="hidden" name="save_before_timeout" value="true" />');
               if (!saved_before_session_end) {
                 saved_before_session_end = true;
-                $('#expired_button').attr('disabled', true);
+                $('#expired_button').hide();
                 $.ajax({
                     url: form[0].action,
                     type: 'patch',
@@ -47,7 +46,7 @@ function PeriodicalQuery() {
                     contentType: false,
                     data: formData,
                     success: function (data) {
-                        $('#session_expired_dialog .modal-footer').append("<a class='usa-button-primary' id='expired_button' href='/timeout'>#{expired_button}</a>");
+                        $('#expired_button').show();
                     }
                 });
               }
@@ -81,7 +80,7 @@ JS
     expired_modal_classes = !!(options[:expired_modal_classes]) ? options[:expired_modal_classes] : ''
     expired_button = options[:expired_button] || "Log in"
     expired_button_classes = !!(options[:expired_button_classes]) ? options[:expired_button_classes] : 'btn'
-    expired_modal_footer = options[:extra_expired_option_buttons] || ""
+    expired_modal_footer = options[:extra_expired_option_buttons] || "<a class='#{expired_button_classes}' id='expired_button' href='/timeout'>#{expired_button}</a>"
 
     # Marked .html_safe -- Passed strings are output directly to HTML!
     normal_expired_modal = "
@@ -95,6 +94,7 @@ JS
             <p>#{expired_message}</p>
           </div>
           <div class='modal-footer'>
+            #{expired_modal_footer}
           </div>
         </div>
       </div>
