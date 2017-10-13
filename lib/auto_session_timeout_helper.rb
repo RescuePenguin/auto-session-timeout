@@ -75,7 +75,7 @@ JS
   def auto_session_warning_tag(options={})
     # continue session
     continue_button = options[:continue_button] || 'Continue'
-    default_warning_message = "You are about to be logged out due to inactivity.<br/><br/>Please click &lsquo;#{continue_button}&rsquo; to stay logged in."
+    default_warning_message = "You are about to be logged out due to inactivity.<br/><br/>Please click &ldquo;#{continue_button}&rdquo; to stay logged in."
     warning_message = options[:warning_message] || default_warning_message
     warning_modal_classes = !!(options[:warning_modal_classes]) ? options[:warning_modal_classes] : ''
     warning_title = options[:warning_title] || 'Logout Warning'
