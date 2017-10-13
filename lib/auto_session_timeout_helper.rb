@@ -27,6 +27,21 @@ function PeriodicalQuery() {
         if(data.live == false){
           $('#logout_dialog').modal('hide');
           $('#session_expired').modal({keyboard: false, backdrop: 'static'});
+          var form = $("form[name='#{flra_form}']");
+          if (form.length > 0) {
+              form.append('<input type="hidden" name="save_before_timeout" value="true" />');
+              $.ajax({
+                  url: form[0].action,
+                  type: 'patch',
+                  dataType: 'json',
+                  data: form.serialize(),
+                  success: function (data) {
+                      console.log('Submitted form');
+                  }
+              });
+          } else {
+
+          }
         }
       }
     });
