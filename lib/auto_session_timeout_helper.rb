@@ -6,6 +6,7 @@ module AutoSessionTimeoutHelper
     start = options[:start] || 60
     warning = options[:warning] || 20
     attributes = options[:attributes] || {}
+    form_name = options[:form_name] || ''
     code = <<JS
 
 if(typeof(jQuery) != 'undefined'){
@@ -27,7 +28,7 @@ function PeriodicalQuery() {
         if(data.live == false){
           $('#logout_dialog').modal('hide');
           $('#session_expired').modal({keyboard: false, backdrop: 'static'});
-          var form = $("form[name='#{flra_form}']");
+          var form = $("form[name='#{form_name}']");
           if (form.length > 0) {
               form.append('<input type="hidden" name="save_before_timeout" value="true" />');
               $.ajax({
