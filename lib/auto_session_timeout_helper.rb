@@ -18,6 +18,9 @@ if(typeof(jQuery) != 'undefined'){
       });
     });
   };
+
+var saved_before_session_end = false;
+
 function PeriodicalQuery() {
   $.ajax({
       url: '/active',
@@ -31,15 +34,18 @@ function PeriodicalQuery() {
           var form = $("form[name='#{form_name}']");
           if (form.length > 0) {
               form.append('<input type="hidden" name="save_before_timeout" value="true" />');
-              $.ajax({
-                  url: form[0].action,
-                  type: 'patch',
-                  dataType: 'json',
-                  data: form.serialize(),
-                  success: function (data) {
-                      console.log('Submitted form');
-                  }
-              });
+              if (!saved_before_session_end) {
+                saved_before_session_end = true;
+                $.ajax({
+                    url: form[0].action,
+                    type: 'patch',
+                    dataType: 'json',
+                    data: form.serialize(),
+                    success: function (data) {
+                        console.log('Submitted form');
+                    }
+                });
+              }
           } else {
 
           }
