@@ -115,7 +115,7 @@ JS
   <div class='modal-dialog #{warning_modal_classes}' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
-        <h3 class='modal-title' id='logout_dialog'>#{warning_title}</h3>
+        <h3 class='modal-title' id='logout_title'>#{warning_title}</h3>
       </div>
       <div class='modal-body'>
         <p>#{warning_message}</p>
