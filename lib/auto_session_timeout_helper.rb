@@ -37,7 +37,6 @@ function PeriodicalQuery() {
     $.ajax({
         url: '/active',
         success: function(data) {
-          console.log(data);
           if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)) {
             logoutModal.show();
           }
