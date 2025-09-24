@@ -31,12 +31,13 @@ function PeriodicalQuery() {
   $.ajax({
       url: '/active',
       success: function(data) {
+        console.log(data)
         if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)){
-          $('#logout_dialog').modal({keyboard: false, backdrop: 'static'});
+          $('#logout_dialog').modal('show', {keyboard: false, backdrop: 'static'});
         }
         if(data.live == false){
           $('#logout_dialog').modal('hide');
-          $('#session_expired_dialog').modal({keyboard: false, backdrop: 'static'});
+          $('#session_expired_dialog').modal('show', {keyboard: false, backdrop: 'static'});
           var form = $("form[name='#{form_name}']");
           if (form.length > 0) {
               var formData = new FormData(form[0]);
