@@ -14,7 +14,10 @@ if(typeof(jQuery) != 'undefined'){
     $.ajax({
       type: "GET",
       url: "/application/session_time",
-      dataType: "html"
+      dataType: "html",
+      success: function(data) {
+        $('#logout_dialog').modal('hide');
+      }
     });
   });
 
@@ -26,47 +29,62 @@ if(typeof(jQuery) != 'undefined'){
 };
 
 var saved_before_session_end = false;
+var logoutModal = new bootstrap.Modal($('#logout_dialog')[0], {backdrop: 'static', keyboard: false});
+var sessionModal = new bootstrap.Modal($('#session_expired_dialog')[0], {backdrop: 'static', keyboard: false});
 
 function PeriodicalQuery() {
-  $.ajax({
-      url: '/active',
-      success: function(data) {
-        console.log(data)
-        if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)){
-          $('#logout_dialog').modal('show', {keyboard: false, backdrop: 'static'});
-        }
-        if(data.live == false){
-          $('#logout_dialog').modal('hide');
-          $('#session_expired_dialog').modal('show', {keyboard: false, backdrop: 'static'});
-          var form = $("form[name='#{form_name}']");
-          if (form.length > 0) {
-              var formData = new FormData(form[0]);
-              form.append('<input type="hidden" name="save_before_timeout" value="true" />');
-              if (!saved_before_session_end && window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
-                saved_before_session_end = true;
-                $('#session_expired_dialog .saving-loader').show();
-                $('#expired_button').hide();
-                $.ajax({
+  if(window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
+    $.ajax({
+        url: '/active',
+        success: function(data) {
+          console.log(data);
+          if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)) {
+            logoutModal.show();
+          }
+          if(data.live == true){
+            logoutModal.hide();
+            sessionModal.show();
+            var form = $("form[name='#{form_name}']");
+            if (form.length > 0) {
+                var formData = new FormData(form[0]);
+                form.append('<input type="hidden" name="save_before_timeout" value="true" />');
+                if (!saved_before_session_end && window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
+                  saved_before_session_end = true;
+                  $('#session_expired_dialog .saving-loader').show();
+                  $('#expired_button').hide();
+                  $.ajax({
                     url: form[0].action,
                     type: 'post',
                     dataType: 'json',
                     processData: false,
                     contentType: false,
-                    data: formData
-                }).done(function() {
-                    //this prevents saving if the user refreshes the page on a form
-                    window.sessionStorage.setItem('saveBeforeTimeout', '1');
-                    $('#session_expired_dialog .saving-loader').hide();
-                    $('#expired_button').show();
-                });
-              }
+                    data: formData,
+                    success: function(data) {
+                      //this prevents saving if the user refreshes the page on a form
+                      window.sessionStorage.setItem('saveBeforeTimeout', '1');
+                      $('#session_expired_dialog .saving-loader').hide();
+                      $('#expired_button').show();
+                      $.ajax({
+                        url: '/timeout',
+                        success: function(data){
+                          console.log(data.message)
+                        },
+                        error: function(data){
+                          console.log("An error has occurred when timing out.")
+                        }
+                      })
+                    }
+                  });
+                }
+            }
           }
         }
-      }
-    });
-  setTimeout(PeriodicalQuery, (#{frequency} * 1000));
+      });
+    clearTimeout(timeoutTimer)
+    timeoutTimer = setTimeout(PeriodicalQuery, (#{frequency} * 1000));
+  }
 }
-setTimeout(PeriodicalQuery, (#{start} * 1000));
+var timeoutTimer = setTimeout(PeriodicalQuery, (#{start} * 1000));
 JS
     javascript_tag(code, attributes)
   end
