@@ -46,37 +46,48 @@ function PeriodicalQuery() {
             sessionModal.show();
             var form = $("form[name='#{form_name}']");
             if (form.length > 0) {
-                var formData = new FormData(form[0]);
-                form.append('<input type="hidden" name="save_before_timeout" value="true" />');
-                if (!saved_before_session_end && window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
-                  saved_before_session_end = true;
-                  $('#session_expired_dialog .saving-loader').show();
-                  $('#expired_button').hide();
-                  $.ajax({
-                    url: form[0].action,
-                    type: 'post',
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function(data) {
-                      //this prevents saving if the user refreshes the page on a form
-                      window.sessionStorage.setItem('saveBeforeTimeout', '1');
-                      $('#session_expired_dialog .saving-loader').hide();
-                      $('#expired_button').show();
-                      $.ajax({
-                        url: '/timeout',
-                        success: function(data){
-                          console.log(data.message)
-                        },
-                        error: function(data){
-                          console.log("An error has occurred when timing out.")
-                        }
-                      })
-                    }
-                  });
+              var formData = new FormData(form[0]);
+              form.append('<input type="hidden" name="save_before_timeout" value="true" />');
+              if (!saved_before_session_end && window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
+                saved_before_session_end = true;
+                $('#session_expired_dialog .saving-loader').show();
+                $('#expired_button').hide();
+                $.ajax({
+                  url: form[0].action,
+                  type: 'post',
+                  dataType: 'json',
+                  processData: false,
+                  contentType: false,
+                  data: formData,
+                  success: function(data) {
+                    //this prevents saving if the user refreshes the page on a form
+                    window.sessionStorage.setItem('saveBeforeTimeout', '1');
+                    $('#session_expired_dialog .saving-loader').hide();
+                    $('#expired_button').show();
+                    $.ajax({
+                      url: '/timeout',
+                      success: function(data){
+                        console.log(data.message)
+                      },
+                      error: function(data){
+                        console.log("An error has occurred when timing out.")
+                      }
+                    });
+                  }
+                });
+              };
+            } else {
+              window.sessionStorage.setItem('saveBeforeTimeout', '1');
+              $.ajax({
+                url: '/timeout',
+                success: function(data){
+                  console.log(data.message)
+                },
+                error: function(data){
+                  console.log("An error has occurred when timing out.")
                 }
-            }
+              })
+            };
           }
         }
       });
@@ -84,7 +95,7 @@ function PeriodicalQuery() {
     timeoutTimer = setTimeout(PeriodicalQuery, (#{frequency} * 1000));
   }
 }
-var timeoutTimer = setTimeout(PeriodicalQuery, (#{start} * 1000));
+var timeoutTimer = null;
 JS
     javascript_tag(code, attributes)
   end
@@ -114,7 +125,7 @@ JS
     # Marked .html_safe -- Passed strings are output directly to HTML!
     normal_expired_modal = "
     <div class='modal' id='session_expired_dialog' tabindex='-1' role='dialog' aria-labelledby='session_expired_dialog_label' aria-hidden='true'>
-      <div class='modal-dialog  #{expired_modal_classes}' role='document'>
+      <div class='modal-dialog modal-dialog-centered  #{expired_modal_classes}' role='document'>
         <div class='modal-content'>
           <div class='modal-header'>
             <h3 class='modal-title' id='session_expired_title'>#{expired_title}</h3>
@@ -131,7 +142,7 @@ JS
   "
 
     "<div class='modal' id='logout_dialog' tabindex='-1' role='dialog' aria-labelledby='logout_dialog_label' aria-hidden='true'>
-  <div class='modal-dialog #{warning_modal_classes}' role='document'>
+  <div class='modal-dialog modal-dialog-centered #{warning_modal_classes}' role='document'>
     <div class='modal-content'>
       <div class='modal-header'>
         <h3 class='modal-title' id='logout_title'>#{warning_title}</h3>
