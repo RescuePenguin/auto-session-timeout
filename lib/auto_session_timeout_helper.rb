@@ -35,18 +35,14 @@ var logoutTimer = null
 var timeoutTimer = null
 
 function PeriodicalQuery() {
-  console.log("Periodical Query")
   if(window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
     $.ajax({
         url: '/active',
         success: function(data) {
-          console.log("Active call was successful");
           if((new Date(data.timeout).getTime() !== 0) && new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)) {
-            console.log(data);
             warningModal.show();
           }
           if(data.live == true || data.live == null){
-            console.log(data);
             warningModal.hide();
             sessionModal.show();
             var form = $("form[name='#{form_name}']");
@@ -86,13 +82,10 @@ function PeriodicalQuery() {
       clearTimeout(timeoutTimer)
       timeoutTimer = setTimeout(PeriodicalQuery, (#{frequency} * 1000));
     }
-  } else {
-    console.log("saveBeforeTimeout set")
   }
 }
 
 function TimeLogout(){
-  console.log("Logging out")
   $.ajax({
     url: '/timeout',
     success: function(data){
