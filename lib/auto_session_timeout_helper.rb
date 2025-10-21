@@ -29,19 +29,25 @@ if(typeof(jQuery) != 'undefined'){
 };
 
 var saved_before_session_end = false;
-var logoutModal = new bootstrap.Modal($('#logout_dialog')[0], {backdrop: 'static', keyboard: false});
+var warningModal = new bootstrap.Modal($('#logout_dialog')[0], {backdrop: 'static', keyboard: false});
 var sessionModal = new bootstrap.Modal($('#session_expired_dialog')[0], {backdrop: 'static', keyboard: false});
+var logoutTimer = null
+var timeoutTimer = null
 
 function PeriodicalQuery() {
+  console.log("Periodical Query")
   if(window.sessionStorage.getItem('saveBeforeTimeout') !== '1') {
     $.ajax({
         url: '/active',
         success: function(data) {
-          if(new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)) {
-            logoutModal.show();
+          console.log("Active call was successful");
+          if((new Date(data.timeout).getTime() !== 0) && new Date(data.timeout).getTime() < (new Date().getTime() + #{warning} * 1000)) {
+            console.log(data);
+            warningModal.show();
           }
-          if(data.live == true){
-            logoutModal.hide();
+          if(data.live == true || data.live == null){
+            console.log(data);
+            warningModal.hide();
             sessionModal.show();
             var form = $("form[name='#{form_name}']");
             if (form.length > 0) {
@@ -63,36 +69,39 @@ function PeriodicalQuery() {
                     window.sessionStorage.setItem('saveBeforeTimeout', '1');
                     $('#session_expired_dialog .saving-loader').hide();
                     $('#expired_button').show();
-                    $.ajax({
-                      url: '/timeout',
-                      success: function(data){
-                        console.log(data.message)
-                      },
-                      error: function(data){
-                        console.log("An error has occurred when timing out.")
-                      }
-                    });
+                    console.log("Setting Logout timer :: #{(frequency + 5)} seconds")
+                    logoutTimer = setTimeout(TimeLogout, (#{frequency + 5} * 1000));
                   }
                 });
               };
             } else {
               window.sessionStorage.setItem('saveBeforeTimeout', '1');
-              $.ajax({
-                url: '/timeout',
-                success: function(data){
-                  console.log(data.message)
-                },
-                error: function(data){
-                  console.log("An error has occurred when timing out.")
-                }
-              })
+              console.log("Setting Logout timer :: #{(frequency + 5)} seconds")
+              logoutTimer = setTimeout(TimeLogout, (#{frequency + 5} * 1000));
             };
           }
         }
       });
-    clearTimeout(timeoutTimer)
-    timeoutTimer = setTimeout(PeriodicalQuery, (#{frequency} * 1000));
+    if (!logoutTimer){
+      clearTimeout(timeoutTimer)
+      timeoutTimer = setTimeout(PeriodicalQuery, (#{frequency} * 1000));
+    }
+  } else {
+    console.log("saveBeforeTimeout set")
   }
+}
+
+function TimeLogout(){
+  console.log("Logging out")
+  $.ajax({
+    url: '/timeout',
+    success: function(data){
+      console.log(data.message)
+    },
+    error: function(data){
+      console.log("An error has occurred when timing out.")
+    }
+  });
 }
 var timeoutTimer = null;
 JS
